@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { ActionResult } from 'next/dist/server/app-render/types';
-import { validateRequest, lucia } from '@/utilities/auth';
+import { validateRequest, lucia } from '@/utilities/lucia/auth';
 
 export default async function LogoutForm() {
   return (

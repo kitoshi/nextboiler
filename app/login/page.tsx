@@ -1,10 +1,10 @@
 import { Argon2id } from 'oslo/password';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { lucia, sql } from '@/utilities/auth';
+import { lucia, sql } from '@/utilities/lucia/auth';
 
 // app/login/page.tsx
-export default async function Page() {
+export default async function Login() {
   return (
     <>
       <h1>Sign in</h1>

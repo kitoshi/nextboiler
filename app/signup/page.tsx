@@ -2,10 +2,10 @@ import { Argon2id } from 'oslo/password';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { generateId } from 'lucia';
-import { lucia, sql } from '@/utilities/auth';
+import { lucia, sql } from '@/utilities/lucia/auth';
 import { error } from 'console';
 
-export default async function Page() {
+export default async function SignUp() {
   return (
     <>
       <h1>Create an account</h1>

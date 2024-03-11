@@ -1,5 +1,5 @@
 import LogoutForm from '@/components/logoutForm';
-import { getUser } from '@/utilities/auth';
+import { getUser } from '@/utilities/lucia/auth';
 
 export default async function Home() {
   const user = await getUser();
