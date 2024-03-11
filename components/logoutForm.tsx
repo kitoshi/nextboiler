@@ -3,7 +3,7 @@ import { cookies } from 'next/headers';
 import { ActionResult } from 'next/dist/server/app-render/types';
 import { validateRequest, lucia } from '@/utilities/auth';
 
-export default async function Page() {
+export default async function LogoutForm() {
   return (
     <form action={logout}>
       <button>Sign out</button>
