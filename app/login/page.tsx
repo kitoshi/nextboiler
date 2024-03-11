@@ -45,15 +45,12 @@ async function login(formData: FormData): Promise<ActionResult> {
       error: 'Invalid password'
     };
   }
-  const existingUsers: Record<string, any>[] = await sql`SELECT *
-  FROM "user"
-  WHERE LOWER(${username}) = 'username';`;
-
-  const existingUser: UserInfo | undefined = existingUsers[0] as UserInfo;
-
+  const existingUser: Record<string, any>[] = await sql`SELECT *
+  FROM "auth_user"
+  WHERE LOWER(username) = ${username.toLowerCase()}`;
   console.log(existingUser);
 
-  if (!existingUser) {
+  if (!existingUser || existingUser.length === 0) {
     // NOTE:
     // Returning immediately allows malicious actors to figure out valid usernames from response times,
     // allowing them to only focus on guessing passwords in brute-force attacks.
@@ -69,7 +66,7 @@ async function login(formData: FormData): Promise<ActionResult> {
   }
 
   const validPassword = await new Argon2id().verify(
-    existingUser.password,
+    existingUser[0].hashedpassword,
     password
   );
   if (!validPassword) {
@@ -78,7 +75,7 @@ async function login(formData: FormData): Promise<ActionResult> {
     };
   }
 
-  const session = await lucia.createSession(existingUser.id, {});
+  const session = await lucia.createSession(existingUser[0].id, {});
   const sessionCookie = lucia.createSessionCookie(session.id);
   cookies().set(
     sessionCookie.name,

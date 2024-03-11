@@ -3,10 +3,9 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { generateId } from 'lucia';
 import { lucia, sql } from '@/utilities/auth';
+import { error } from 'console';
 
 export default async function Page() {
-  const response = await sql`SELECT version()`;
-  console.log(response);
   return (
     <>
       <h1>Create an account</h1>
@@ -25,6 +24,7 @@ export default async function Page() {
 
 interface ActionResult {
   error: string;
+  redirect?: string;
 }
 
 async function signup(formData: FormData): Promise<ActionResult | undefined> {
@@ -55,23 +55,34 @@ async function signup(formData: FormData): Promise<ActionResult | undefined> {
 
   const hashedPassword = await new Argon2id().hash(password);
   const userId = generateId(15);
-  try {
-    const response = await sql`
-  INSERT INTO "user" ("user_id", "username", "hashedpassword")
+
+  await sql`
+  INSERT INTO "auth_user" ("id", "username", "hashedpassword")
   VALUES (${userId}, ${username}, ${hashedPassword});
 `;
+  const existingUser: Record<string, any>[] = await sql`SELECT *
+FROM "auth_user"
+WHERE LOWER(username) = ${username.toLowerCase()}`;
+  console.log(existingUser);
 
-    console.log(response);
-
-    const session = await lucia.createSession(userId, {});
-    const sessionCookie = lucia.createSessionCookie(session.id);
-    cookies().set(
-      sessionCookie.name,
-      sessionCookie.value,
-      sessionCookie.attributes
-    );
-    return redirect('/');
-  } catch (error) {
-    console.error('Error during signup:', error);
+  if (!existingUser || existingUser.length === 0) {
+    // NOTE:
+    // Returning immediately allows malicious actors to figure out valid usernames from response times,
+    // allowing them to only focus on guessing passwords in brute-force attacks.
+    // As a preventive measure, you may want to hash passwords even for invalid usernames.
+    // However, valid usernames can be already be revealed with the signup page among other methods.
+    // It will also be much more resource intensive.
+    // Since protecting against this is none-trivial,
+    // it is crucial your implementation is protected against brute-force attacks with login throttling etc.
+    // If usernames are public, you may outright tell the user that the username is invalid.
+    throw error;
   }
+  const session = await lucia.createSession(existingUser[0].id, {});
+  const sessionCookie = lucia.createSessionCookie(session.id);
+  cookies().set(
+    sessionCookie.name,
+    sessionCookie.value,
+    sessionCookie.attributes
+  );
+  return redirect('/');
 }
