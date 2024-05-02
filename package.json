@@ -11,6 +11,8 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@langchain/community": "^0.0.53",
+    "@langchain/openai": "^0.0.28",
     "@lucia-auth/adapter-postgresql": "^3.1.1",
     "@mui/icons-material": "^5.14.18",
     "@mui/material": "^5.14.18",

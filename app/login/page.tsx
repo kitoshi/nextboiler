@@ -81,7 +81,7 @@ async function login(formData: FormData): Promise<ActionResult> {
     sessionCookie.value,
     sessionCookie.attributes
   );
-  return redirect('/');
+  return redirect('/dashboard');
 }
 
 interface ActionResult {
