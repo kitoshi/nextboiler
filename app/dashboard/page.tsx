@@ -5,16 +5,16 @@ import { Button, Typography } from '@mui/material';
 import { useState } from 'react';
 
 export default function Dashboard() {
-  const [stuff, setStuff] = useState<string>();
+  const [response, setResponse] = useState<string>();
   async function handleChange() {
     const output = await parsePrompt();
-    setStuff(output);
+    setResponse(output);
   }
   return (
     <>
-      <h1>Questionnaire</h1>
+      <h1>Chat</h1>
       <Button onClick={handleChange}>Use AI</Button>
-      <Typography>{stuff}</Typography>
+      <Typography>{response}</Typography>
     </>
   );
 }
